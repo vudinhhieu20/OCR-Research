@@ -8,5 +8,38 @@
 </head>
 <body>
     <h1>Tìm hiểu về framework PaddleOCR</h1>
+    <h2>SAST framework cho text detection</h2>
+    <h3>Phương pháp</h3>
+    <h4>Arbitrary Shape Representation</h4>
+    <p>Bounding boxes, rotated rectangles và quadrilateral (tứ giác) là các phương pháp biểu diễn cổ điển trong đa số
+        các phương pháp text detection, tuy nhiên phương pháp này không phù hợp với các text có hình dạng khác và bất kỳ.
+        Phương pháp dựa trên phân vùng (<b>segmentation-based</b>) mô phỏng việc detection với các text có hình dạng tùy ý giống 
+        với phân vùng nhị phân (<b>binary segmentation</b>). Đa số trường hợp sử dụng <b>contours</b> trên mặt nạ <b>instance mask</b>
+        như biểu diễn vùng của text, nhưng dễ bị ảnh hưởng bởi tính hoàn chỉnh và thống nhất của phân vùng (<b>segmentation</b>). Tuy nhiên,
+        PSENet [], TextSnake [] cố gắng xây dựng lũy tiến từng bước (<b>progressively reconstruct</b>) biểu diễn vùng đa giác của detected
+        text dựa trên vùng shrunk text, nhưng hậu xử lý thường lâu và phức tạp. Dựa trên những khó khăn đó, SAST đã thiết kế một phương pháp
+        hiệu quả hơn.
+
+        Ở SAST, chúng ta trích xuất đường trung tâm (<b>center line</b>) của vùng text (<b>TCL map</b>) và xây dựng lại chính xác, hình
+        dạng biểu diễn của vùng text với thuộc tính hình học (<b>geometry property</b>) như TBO (chỉ khoảng lệch giữa đường trung tâm TCL map
+        với các cạnh trên và dưới của vùng text). 
+        <ul>
+            Cụ thể hơn, như trong hình minh họa, phương pháp tổng quan gồm hai bước:
+        lấy mẫu của các điểm trung tâm và trích xuất các điểm biên.
+        <li>
+            Đầu tiên, chúng ta lấy mẫu n điểm cách đều từ trái sang phải trên đường trung tâm của vùng text.
+        </li>
+
+        <li>
+            Sau đó, dựa trên một số xử lý, từ mỗi điểm lấy mẫu ở phía trên, chúng ta có thể xác định cặp điểm biên tương ứng cung cấp bởi TBO.
+            Từ các điểm biên như vậy, liên kết với nhau theo chiều kim đồng hoof, ta thu được một hình đa giác hoàn chỉnh.
+        </li>
+        </ul>
+
+        Thay vì cài đặt n điểm cố định, chúng ta có thể gán tỉ lệ chiều dài đường trung tâm đối với chiều dài trung bình của cặp độ lệch của biên
+        với đường trung tâm (TBO).
+
+        
+</p>
 </body>
 </html>
