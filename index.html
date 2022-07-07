@@ -38,8 +38,30 @@
 
         Thay vì cài đặt n điểm cố định, chúng ta có thể gán tỉ lệ chiều dài đường trung tâm đối với chiều dài trung bình của cặp độ lệch của biên
         với đường trung tâm (TBO).
+</p>
 
-        
+<h4>Pipeline</h4>
+<p>
+    Kiến trúc mạng của bộ <b>FCN-based text detector</b> bị hạn chế với các trường nhận thức cục bộ <b>local receptive fields (? link)</b> và thông
+    tin ngữ cảnh phạm vi ngắn (<b>shor-range contextual information (?link)</b>), nên gặp khó khăn với việc phân vùng một số dạng vùng text khó. Do
+    đó, với SAST, chúng ta thiết kết và sử dụng <b>Context Attention Block</b> để tích hợp với các phụ thuộc phạm vi lớn (<b>long-range dependencies</b>)
+    của từng điểm dảnh để thu lại các đặc trưng mang tính đại diện hơn. Một sự thay thế khác cho <b>Connected Component Analysis</b>, ở SAST đã đề xuất
+    <b>Point-to-Quad Assignment</b> để phân cụm các điểm ảnh trên đường trung tâm TCL map vào các điểm text, rồi sử dụng TCL và TVO map để khôi phụ lại
+    tứ giác bounding boxes của điểm text như thông tin mức cao.
+</p>
+
+<p>
+    Tổng quan về framework có thể thấy ở hình minh họa dưới. Trong hình bao gồm 3 phần, bao gồm <b>stem network, multi-task branches, post-processing part</b>
+</p>
+
+<p>
+    Stem network dựa trên ResNet-50 [] cùng FPN [] và CABs để tạo các biểu diễn ngữ nghĩa tăng cường (<b>context-enhanced representation</b>). TCL, TCO, TVO và
+    TBO map được dự đoán đối với từng vùng text được xử lý với <b>multi-task problem</b>. Trong post-processing, chúng ta phân vùng từng text instances bằng 
+    <b>Point-to-Quad Assignment</b>. Cụ thể hơn, tương tự với <b>EAST (? link)</b>, TVO map hồi quy (regress) trực tiếp bốn vector của tứ giác bao quanh 
+    (bounding) của vùng text, và kết quả detection được coi như là những hiểu biết về đối tượng mức cao (<b>high-level object knowledge</b>). Đối với từng điểm
+    ảnh pixel trong TCL map, tương ứng với đó là một vector độ lệch (offset) từ TCO map có hướng trỏ đến điểm trung tâm mức thấp (<b>low-level center</b>) mà
+    điểm ấy thuộc về. Tính toán khoảng cách giữa <b>low-level center</b> và <b>high-level object center</b> của tứ giác bao quanh vùng detect, các pixel điểm ảnh
+    trong TCL map sẽ được nhóm vào các text instances. 
 </p>
 </body>
 </html>
